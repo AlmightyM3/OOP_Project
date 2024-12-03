@@ -52,4 +52,35 @@ public class KeyChecker extends KeyAdapter {
 	    	firePressed = true;
 	    }
 	}
+	
+	boolean getUpPressed() {
+		return upPressed;
+	}
+	void setUpPressed(boolean newValue) {
+		upPressed = newValue;
+	}
+	boolean getDownPressed() {
+		return downPressed;
+	}
+	void setDownPressed(boolean newValue) {
+		downPressed = newValue;
+	}
+	boolean getLeftPressed() {
+		return leftPressed;
+	}
+	void setLeftPressed(boolean newValue) {
+		leftPressed = newValue;
+	}
+	boolean getRightPressed() {
+		return rightPressed;
+	}
+	void setRightPressed(boolean newValue) {
+		rightPressed = newValue;
+	}
+	boolean getFirePressed() {
+		return firePressed;
+	}
+	void setFirePressed(boolean newValue) {
+		firePressed = newValue;
+	}
 }

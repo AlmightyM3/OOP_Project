@@ -6,9 +6,20 @@ import javax.swing.JTextField;
 import javax.vecmath.Vector2d;
 
 public class GameManager {
+	KeyChecker keyChecker;
+	public GameManager() {
+		keyChecker = new KeyChecker();
+	}
+	
+	KeyChecker getKeyChecker() {
+		return keyChecker;
+	}
+	
 	public static void main(String[] args) {
 		final int WINDOW_SIZE_X = 1080;
 		final int WINDOW_SIZE_Y = 720;
+		
+		GameManager gameManager = new GameManager();
 		
 		// Create a window
 		JFrame app = new JFrame("Asteroids");
@@ -19,7 +30,7 @@ public class GameManager {
 		Canvas canvas = new Canvas();
 		canvas.setIgnoreRepaint(true);
 		canvas.setSize(WINDOW_SIZE_X, WINDOW_SIZE_Y);
-		canvas.addKeyListener(new KeyChecker());
+		canvas.addKeyListener(gameManager.getKeyChecker());
 
 		// Add canvas to game window
 		app.add(canvas);
@@ -47,8 +58,9 @@ public class GameManager {
 		long curTime = System.currentTimeMillis();
 		long lastTime = curTime;
 		
-		PhysicsObject test1 = new PhysicsObject(new Vector2d(0,100), new Vector2d(10,0), 50);
-		PhysicsObject test2 = new PhysicsObject(new Vector2d(800,100), new Vector2d(-10,0), 50);
+//		PhysicsObject test1 = new PhysicsObject(new Vector2d(0,100), new Vector2d(10,0), 50);
+//		PhysicsObject test2 = new PhysicsObject(new Vector2d(800,100), new Vector2d(-10,0), 50);
+		Player player = new Player();
 
 		while(true) {
 			try {
@@ -57,22 +69,31 @@ public class GameManager {
 				curTime = System.currentTimeMillis();
 				float dt = (float)(curTime - lastTime)/1000.0f;
 				
+				if (gameManager.getKeyChecker().getUpPressed()) {
+					player.setSpeed(20);}
+				else
+					player.setSpeed(0);
 				
+				player.updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
 
 				// Clear back buffer
 				g2d = bi.createGraphics();
 				g2d.setColor(backgroundColor);
 				g2d.fillRect(0,0, WINDOW_SIZE_X,WINDOW_SIZE_X);
 
-				test1.updatePhysics(dt, WINDOW_SIZE_X,WINDOW_SIZE_Y);
-				test2.updatePhysics(dt, WINDOW_SIZE_X,WINDOW_SIZE_Y);
-				if (test1.isColliding(test2)) {
-					test1.velocity.scale(-1);
-					test2.velocity.scale(-1);
-				}
-				g2d.setColor(Color.GREEN);
-				g2d.draw(new Ellipse2D.Double(test1.position.x-50, test1.position.y-50, 50*2,50*2));
-				g2d.draw(new Ellipse2D.Double(test2.position.x-50, test2.position.y-50, 50*2,50*2));
+//				test1.updatePhysics(dt, WINDOW_SIZE_X,WINDOW_SIZE_Y);
+//				test2.updatePhysics(dt, WINDOW_SIZE_X,WINDOW_SIZE_Y);
+//				if (test1.isColliding(test2)) {
+//					test1.velocity.scale(-1);
+//					test2.velocity.scale(-1);
+//				}
+//				g2d.setColor(Color.GREEN);
+//				g2d.draw(new Ellipse2D.Double(test1.position.x-50, test1.position.y-50, 50*2,50*2));
+//				g2d.draw(new Ellipse2D.Double(test2.position.x-50, test2.position.y-50, 50*2,50*2));
+				g2d.setColor(Color.WHITE);
+				g2d.translate(player.getPosition().x, player.getPosition().y);
+				g2d.draw(player.getArt());
+				g2d.translate(-player.getPosition().x, -player.getPosition().y);
 
 				// Display FPS
 				g2d.setFont(new Font("Courier New", Font.PLAIN, 16));
