@@ -58,7 +58,9 @@ public class GameManager {
 		long lastTime = curTime;
 		
 		Player player = new Player();
-		Asteroid[] asteroids = {new Asteroid(new Vector2d(400,100), 0), new Asteroid(new Vector2d(400,300), 1), new Asteroid(new Vector2d(400,500), 2)}; 
+		Asteroid[] asteroids = {new Asteroid(new Vector2d(400,100), 0), new Asteroid(new Vector2d(600,300), 0), new Asteroid(new Vector2d(900,500), 0)}; 
+		Bullet[] bullets = new Bullet[0];
+		
 		boolean isRunning = true;
 
 		while(true) {
@@ -80,6 +82,12 @@ public class GameManager {
 					if (!isRunning) {
 						isRunning = true;
 						player.setPosition(new Vector2d(100,100));
+						bullets = new Bullet[0];
+						asteroids = gameManager.insert(new Asteroid[0], new Asteroid(new Vector2d(400,100), 0));
+						asteroids = gameManager.insert(asteroids, new Asteroid(new Vector2d(600,300), 0));
+						asteroids = gameManager.insert(asteroids, new Asteroid(new Vector2d(900,500), 0));
+					} else {
+						bullets = gameManager.insert(bullets, new Bullet(player));
 					}
 					
 					gameManager.getKeyChecker().setFirePressed(false);
@@ -87,11 +95,29 @@ public class GameManager {
 				
 				if (isRunning) {
 					player.updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
-					for (Asteroid asteroid : asteroids) {
-						asteroid.updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
-						if (asteroid.isColliding(player)) 
-							isRunning=false;
+					for (int i=0;i<bullets.length;i++) {
+						bullets[i].updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+						if (System.currentTimeMillis()>=bullets[i].timeOfDestruction) 
+							bullets = gameManager.remove(bullets, i--);
 					}
+					for (int i=0;i<asteroids.length;i++) {
+						asteroids[i].updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+						if (asteroids[i].isColliding(player)) 
+							isRunning=false;
+						for (int b=0;b<bullets.length;b++) {
+							if (asteroids[i].isColliding(bullets[b])) {
+								if (asteroids[i].size<2) {
+									asteroids = gameManager.insert(asteroids, new Asteroid(new Vector2d(asteroids[i].position), asteroids[i].size+1));
+									asteroids = gameManager.insert(asteroids, new Asteroid(new Vector2d(asteroids[i].position), asteroids[i].size+1));
+								}
+								asteroids = gameManager.remove(asteroids, i--);
+								bullets = gameManager.remove(bullets, b);
+								b = bullets.length;
+							}
+						}
+					}
+					if (asteroids.length <1)
+						isRunning = false;
 				}
 
 				// Clear back buffer
@@ -104,6 +130,11 @@ public class GameManager {
 					g2d.translate(asteroid.getPosition().x, asteroid.getPosition().y);
 					g2d.draw(asteroid.getArt());
 					g2d.translate(-asteroid.getPosition().x, -asteroid.getPosition().y);
+				}
+				for (Bullet bullet : bullets) {
+					g2d.translate(bullet.getPosition().x, bullet.getPosition().y);
+					g2d.draw(bullet.getArt());
+					g2d.translate(-bullet.getPosition().x, -bullet.getPosition().y);
 				}
 				
 				g2d.translate(player.getPosition().x, player.getPosition().y);
@@ -133,5 +164,37 @@ public class GameManager {
 					g2d.dispose();
 			}
 		}
+	}
+	
+	public Bullet[] remove(Bullet[] array, int index) {
+		if (array.length <= 0) // If the array is empty, don't even try to remove anything.
+			return array;
+		
+		Bullet[] output = new Bullet[array.length-1]; // Create a new array that can hold all of the old array - the value we remove.
+		System.arraycopy(array, 0, output, 0, index); // Add the first part up to but not including the value to remove.
+		System.arraycopy(array, index+1, output, index, array.length-index-1); // Add the second part from after the value to remove to the end.
+		return output; // Return the updated array to the caller.
+	}
+	public Bullet[] insert(Bullet[] array, Bullet newValue) { 
+		Bullet[] output = new Bullet[array.length+1]; // Create a new array that can hold all of the old array and one new value.
+		System.arraycopy(array, 0, output, 0, array.length); // Add the old array.
+		output[array.length] = newValue; // Add the new value.
+		return output; // Return the updated array to the caller.
+	}
+	
+	public Asteroid[] remove(Asteroid[] array, int index) {
+		if (array.length <= 0) // If the array is empty, don't even try to remove anything.
+			return array;
+		
+		Asteroid[] output = new Asteroid[array.length-1]; // Create a new array that can hold all of the old array - the value we remove.
+		System.arraycopy(array, 0, output, 0, index); // Add the first part up to but not including the value to remove.
+		System.arraycopy(array, index+1, output, index, array.length-index-1); // Add the second part from after the value to remove to the end.
+		return output; // Return the updated array to the caller.
+	}
+	public Asteroid[] insert(Asteroid[] array, Asteroid newValue) { 
+		Asteroid[] output = new Asteroid[array.length+1]; // Create a new array that can hold all of the old array and one new value.
+		System.arraycopy(array, 0, output, 0, array.length); // Add the old array.
+		output[array.length] = newValue; // Add the new value.
+		return output; // Return the updated array to the caller.
 	}
 }
