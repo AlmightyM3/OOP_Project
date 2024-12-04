@@ -8,7 +8,7 @@ public class Player extends PhysicsObject {
 		position = new Vector2d(100,100);
 		velocity = new Vector2d(0,0);
 		
-		Vector2d[] points = {new Vector2d(40,0),new Vector2d(-40,30),new Vector2d(-20,0),new Vector2d(-40,-30)};
+		Vector2d[] points = {new Vector2d(30,0),new Vector2d(-30,22.5),new Vector2d(-15,0),new Vector2d(-30,-22.5)};
 		art = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
 		art.moveTo (points[0].x, points[0].y);
 		for (int i = 1; i < points.length; i++) {
@@ -16,7 +16,7 @@ public class Player extends PhysicsObject {
 		}
 		art.closePath();
 		
-		collisionWidth = 30;
+		collisionWidth = 20;
 		direction = 0;
 		speed = 20;
 	}

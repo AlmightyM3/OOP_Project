@@ -18,10 +18,10 @@ public class KeyChecker extends KeyAdapter {
 	        case KeyEvent.VK_W :
 	        	upPressed = true;
 	            break;
-	        case KeyEvent.VK_A :
+	        case KeyEvent.VK_S :
 	        	downPressed = true;
 	            break;
-	        case KeyEvent.VK_S :
+	        case KeyEvent.VK_A :
 	        	leftPressed = true;
 	            break;
 	        case KeyEvent.VK_D :
@@ -35,10 +35,10 @@ public class KeyChecker extends KeyAdapter {
 	    case KeyEvent.VK_W :
         	upPressed = false;
             break;
-        case KeyEvent.VK_A :
+        case KeyEvent.VK_S :
         	downPressed = false;
             break;
-        case KeyEvent.VK_S :
+        case KeyEvent.VK_A :
         	leftPressed = false;
             break;
         case KeyEvent.VK_D :

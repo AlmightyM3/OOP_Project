@@ -109,6 +109,7 @@ public class PhysicsObject {
 		position.y %=windowSizeY;
 	}
 	boolean isColliding(PhysicsObject other) {
-		return (this.position.x-other.position.x)*(this.position.x-other.position.x) + (this.position.y-other.position.y)*(this.position.y-other.position.y) <= (this.collisionWidth+other.collisionWidth)*(this.collisionWidth+other.collisionWidth);
+		return this.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y);
+		//return (this.position.x-other.position.x)*(this.position.x-other.position.x) + (this.position.y-other.position.y)*(this.position.y-other.position.y) <= (this.collisionWidth+other.collisionWidth)*(this.collisionWidth+other.collisionWidth);
 	}
 }

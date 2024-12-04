@@ -2,7 +2,6 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.vecmath.Vector2d;
 
 public class GameManager {
@@ -58,9 +57,9 @@ public class GameManager {
 		long curTime = System.currentTimeMillis();
 		long lastTime = curTime;
 		
-//		PhysicsObject test1 = new PhysicsObject(new Vector2d(0,100), new Vector2d(10,0), 50);
-//		PhysicsObject test2 = new PhysicsObject(new Vector2d(800,100), new Vector2d(-10,0), 50);
 		Player player = new Player();
+		Asteroid[] asteroids = {new Asteroid(new Vector2d(400,100), 0), new Asteroid(new Vector2d(400,300), 1), new Asteroid(new Vector2d(400,500), 2)}; 
+		boolean isRunning = true;
 
 		while(true) {
 			try {
@@ -69,30 +68,48 @@ public class GameManager {
 				curTime = System.currentTimeMillis();
 				float dt = (float)(curTime - lastTime)/1000.0f;
 				
-				if (gameManager.getKeyChecker().getUpPressed()) {
-					player.setSpeed(20);}
+				if (gameManager.getKeyChecker().getUpPressed()) 
+					player.setSpeed(20);
 				else
 					player.setSpeed(0);
+				if (gameManager.getKeyChecker().getLeftPressed()) 
+					player.setDirection(player.getDirection()-(float)Math.PI*dt);
+				if (gameManager.getKeyChecker().getRightPressed()) 
+					player.setDirection(player.getDirection()+(float)Math.PI*dt);
+				if (gameManager.getKeyChecker().getFirePressed()) {
+					if (!isRunning) {
+						isRunning = true;
+						player.setPosition(new Vector2d(100,100));
+					}
+					
+					gameManager.getKeyChecker().setFirePressed(false);
+				}
 				
-				player.updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+				if (isRunning) {
+					player.updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+					for (Asteroid asteroid : asteroids) {
+						asteroid.updatePhysics(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+						if (asteroid.isColliding(player)) 
+							isRunning=false;
+					}
+				}
 
 				// Clear back buffer
 				g2d = bi.createGraphics();
 				g2d.setColor(backgroundColor);
 				g2d.fillRect(0,0, WINDOW_SIZE_X,WINDOW_SIZE_X);
 
-//				test1.updatePhysics(dt, WINDOW_SIZE_X,WINDOW_SIZE_Y);
-//				test2.updatePhysics(dt, WINDOW_SIZE_X,WINDOW_SIZE_Y);
-//				if (test1.isColliding(test2)) {
-//					test1.velocity.scale(-1);
-//					test2.velocity.scale(-1);
-//				}
-//				g2d.setColor(Color.GREEN);
-//				g2d.draw(new Ellipse2D.Double(test1.position.x-50, test1.position.y-50, 50*2,50*2));
-//				g2d.draw(new Ellipse2D.Double(test2.position.x-50, test2.position.y-50, 50*2,50*2));
 				g2d.setColor(Color.WHITE);
+				for (Asteroid asteroid : asteroids) {
+					g2d.translate(asteroid.getPosition().x, asteroid.getPosition().y);
+					g2d.draw(asteroid.getArt());
+					g2d.translate(-asteroid.getPosition().x, -asteroid.getPosition().y);
+				}
+				
 				g2d.translate(player.getPosition().x, player.getPosition().y);
+				g2d.rotate(player.getDirection());
 				g2d.draw(player.getArt());
+				g2d.rotate(-player.getDirection());
 				g2d.translate(-player.getPosition().x, -player.getPosition().y);
 
 				// Display FPS
