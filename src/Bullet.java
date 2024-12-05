@@ -1,5 +1,4 @@
 import java.awt.geom.GeneralPath;
-import java.util.Date;
 import javax.vecmath.Vector2d;
 
 public class Bullet extends PhysicsObject {
@@ -7,7 +6,6 @@ public class Bullet extends PhysicsObject {
 	
 	public Bullet(Player player) {
 		position = new Vector2d(player.position);
-		double dir=Math.random()*Math.TAU;
 		velocity = new Vector2d(Math.cos(player.direction)*30, Math.sin(player.direction)*30);
 		
 		collisionWidth = 5;
