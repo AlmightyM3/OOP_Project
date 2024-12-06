@@ -1,3 +1,4 @@
+import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import javax.vecmath.Vector2d;
 
@@ -108,8 +109,35 @@ public class PhysicsObject {
 		position.x %=windowSizeX;
 		position.y %=windowSizeY;
 	}
-	boolean isColliding(PhysicsObject other) {
-		return this.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y);
+	boolean isColliding(PhysicsObject other, int windowSizeX, int windowSizeY) {
+		return this.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y) || 
+				this.art.contains(other.getPosition().x-this.position.x-windowSizeX, other.getPosition().y-this.position.y) || 
+				this.art.contains(other.getPosition().x-this.position.x+windowSizeX, other.getPosition().y-this.position.y) || 
+				this.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y-windowSizeY) || 
+				this.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y+windowSizeY) || 
+				
+				other.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y) || 
+				other.art.contains(other.getPosition().x-this.position.x-windowSizeX, other.getPosition().y-this.position.y) || 
+				other.art.contains(other.getPosition().x-this.position.x+windowSizeX, other.getPosition().y-this.position.y) || 
+				other.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y-windowSizeY) || 
+				other.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y+windowSizeY);
+		//return this.art.contains(other.getPosition().x-this.position.x, other.getPosition().y-this.position.y);
 		//return (this.position.x-other.position.x)*(this.position.x-other.position.x) + (this.position.y-other.position.y)*(this.position.y-other.position.y) <= (this.collisionWidth+other.collisionWidth)*(this.collisionWidth+other.collisionWidth);
+	}
+	
+	void draw(Graphics2D g2d, int windowSizeX, int windowSizeY) {
+		g2d.translate(position.x, position.y);
+		g2d.draw(art);
+		
+		g2d.translate(windowSizeX, 0);
+		g2d.draw(art);
+		g2d.translate(-2*windowSizeX, 0);
+		g2d.draw(art);
+		g2d.translate(windowSizeX, windowSizeY);
+		g2d.draw(art);
+		g2d.translate(0, -2*windowSizeY);
+		g2d.draw(art);
+		
+		g2d.translate(-position.x, windowSizeY-position.y);
 	}
 }

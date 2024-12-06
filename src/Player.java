@@ -1,3 +1,4 @@
+import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import javax.vecmath.Vector2d;
 
@@ -36,5 +37,31 @@ public class Player extends PhysicsObject {
 	void updatePhysics(float dt, int windowSizeX, int windowSizeY) {
 		velocity = new Vector2d(Math.cos(direction)*speed, Math.sin(direction)*speed);
 		super.updatePhysics(dt, windowSizeX, windowSizeY);
+	}
+	
+	void draw(Graphics2D g2d, int windowSizeX, int windowSizeY) {
+		g2d.translate(position.x, position.y);
+		g2d.rotate(direction);
+		g2d.draw(art);
+		g2d.rotate(-direction);
+		
+		g2d.translate(windowSizeX, 0);
+		g2d.rotate(direction);
+		g2d.draw(art);
+		g2d.rotate(-direction);
+		g2d.translate(-2*windowSizeX, 0);
+		g2d.rotate(direction);
+		g2d.draw(art);
+		g2d.rotate(-direction);
+		g2d.translate(windowSizeX, windowSizeY);
+		g2d.rotate(direction);
+		g2d.draw(art);
+		g2d.rotate(-direction);
+		g2d.translate(0, -2*windowSizeY);
+		g2d.rotate(direction);
+		g2d.draw(art);
+		g2d.rotate(-direction);
+		
+		g2d.translate(-position.x, windowSizeY-position.y);
 	}
 }

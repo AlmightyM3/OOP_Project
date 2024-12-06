@@ -11,7 +11,7 @@ public class GameManager {
 	boolean isRunning;
 	long restartDelay;
 	
-	public GameManager() {
+	public GameManager() { // Set all default values, only one constructor since all should start with the same values each time.
 		keyChecker = new KeyChecker();
 		
 		player = new Player();
@@ -26,7 +26,7 @@ public class GameManager {
 		return keyChecker;
 	}
 	
-	void handleInput(float dt) {
+	void handleInput(float dt) { // Checks what keys have been pressed and deals with it.		
 		if (keyChecker.getUpPressed()) 
 			player.setSpeed(20);
 		else
@@ -36,9 +36,9 @@ public class GameManager {
 		if (keyChecker.getRightPressed()) 
 			player.setDirection(player.getDirection()+(float)Math.PI*dt);
 		if (keyChecker.getFirePressed()) {
-			if (isRunning) {
+			if (isRunning) { // if the game is running, shoot
 				bullets = insert(bullets, new Bullet(player));
-			} else if(restartDelay <= System.currentTimeMillis()){
+			} else if(restartDelay <= System.currentTimeMillis()){ // If suffishint time has passed reset the game.
 				isRunning = true;
 				player.setPosition(new Vector2d(100,100));
 				bullets = new Bullet[0];
@@ -61,12 +61,12 @@ public class GameManager {
 			}
 			for (int i=0;i<asteroids.length;i++) {
 				asteroids[i].updatePhysics(dt, windowSizeX, windowSizeY);
-				if (asteroids[i].isColliding(player)) {
+				if (asteroids[i].isColliding(player, windowSizeX, windowSizeY)) {
 					isRunning=false;
 					restartDelay = System.currentTimeMillis()+500;
 				}
 				for (int b=0;b<bullets.length;b++) {
-					if (asteroids[i].isColliding(bullets[b])) {
+					if (asteroids[i].isColliding(bullets[b], windowSizeX, windowSizeY)) {
 						if (asteroids[i].size<2) {
 							asteroids = insert(asteroids, new Asteroid(new Vector2d(asteroids[i].position), asteroids[i].size+1));
 							asteroids = insert(asteroids, new Asteroid(new Vector2d(asteroids[i].position), asteroids[i].size+1));
@@ -87,27 +87,25 @@ public class GameManager {
 	void renderScene(Graphics2D g2d, int windowSizeX, int windowSizeY) {
 		g2d.setColor(Color.WHITE);
 		for (Asteroid asteroid : asteroids) {
-			g2d.translate(asteroid.getPosition().x, asteroid.getPosition().y);
-			g2d.draw(asteroid.getArt());
-			g2d.translate(-asteroid.getPosition().x, -asteroid.getPosition().y);
+			asteroid.draw(g2d, windowSizeX, windowSizeY);
 		}
 		for (Bullet bullet : bullets) {
-			g2d.translate(bullet.getPosition().x, bullet.getPosition().y);
-			g2d.draw(bullet.getArt());
-			g2d.translate(-bullet.getPosition().x, -bullet.getPosition().y);
+			bullet.draw(g2d, windowSizeX, windowSizeY);
 		}
 		
-		g2d.translate(player.getPosition().x, player.getPosition().y);
-		g2d.rotate(player.getDirection());
-		g2d.draw(player.getArt());
-		g2d.rotate(-player.getDirection());
-		g2d.translate(-player.getPosition().x, -player.getPosition().y);
+		player.draw(g2d, windowSizeX, windowSizeY);
 		
 		if (!isRunning) {
 			g2d.setFont(new Font("Courier New", Font.PLAIN, 48));
 			if (restartDelay==0) {
 				g2d.setColor(Color.WHITE);
-				g2d.drawString("Space to start!", windowSizeX/2-200, windowSizeY/2-24);
+				g2d.drawString("Space to start!", windowSizeX/2-180, windowSizeY/2-18);
+				g2d.setFont(new Font("Courier New", Font.PLAIN, 96));
+				g2d.drawString("ASTEROIDS", windowSizeX/2-216, windowSizeY/2-100);
+				g2d.setFont(new Font("Courier New", Font.PLAIN, 24));
+				g2d.drawString("WASD or arrows to move.", windowSizeX/2-138, windowSizeY/2+24);
+				g2d.drawString("Space will also Shoot.", windowSizeX/2-132, windowSizeY/2+48);
+				g2d.drawString("All objects screen-wrap.", windowSizeX/2-144, windowSizeY/2+72);
 			} else if (asteroids.length <1) {
 				g2d.setColor(Color.GREEN);
 				g2d.drawString("You Win!", windowSizeX/2-96, windowSizeY/2-24);
@@ -133,6 +131,9 @@ public class GameManager {
 		output[array.length] = newValue; // Add the new value.
 		return output; // Return the updated array to the caller.
 	}
+	public Bullet[] getBullets() {
+		return bullets;
+	}
 	
 	public Asteroid[] remove(Asteroid[] array, int index) {
 		if (array.length <= 0) // If the array is empty, don't even try to remove anything.
@@ -149,12 +150,15 @@ public class GameManager {
 		output[array.length] = newValue; // Add the new value.
 		return output; // Return the updated array to the caller.
 	}
+	public Asteroid[] getAsteroids() {
+		return asteroids;
+	}
 	
 	public static void main(String[] args) {
 		final int WINDOW_SIZE_X = 1080;
 		final int WINDOW_SIZE_Y = 720;
 		
-		GameManager gameManager = new GameManager();
+		GameManager gameManager = new GameManager(); // Create ourselves a game manager.
 		
 		// Create a window
 		JFrame app = new JFrame("Asteroids");
@@ -197,16 +201,15 @@ public class GameManager {
 				curTime = System.currentTimeMillis();
 				float dt = (float)(curTime - lastTime)/1000.0f;
 				
-				gameManager.handleInput(dt);
-				
-				gameManager.updateGame(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+				gameManager.handleInput(dt); // Check what keys have been pressed and deal with it.				
+				gameManager.updateGame(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y); // Move physics objects and resolve collisions.
 
 				// Clear back buffer
 				g2d = backBuffer.createGraphics();
 				g2d.setColor(Color.BLACK);
 				g2d.fillRect(0,0, WINDOW_SIZE_X,WINDOW_SIZE_Y);
 
-				gameManager.renderScene(g2d, WINDOW_SIZE_X, WINDOW_SIZE_Y);
+				gameManager.renderScene(g2d, WINDOW_SIZE_X, WINDOW_SIZE_Y); // Draw all physics objects and UI.
 
 				// Display FPS
 				g2d.setFont(new Font("Courier New", Font.PLAIN, 16));
