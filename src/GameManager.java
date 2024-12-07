@@ -106,6 +106,11 @@ public class GameManager {
 				g2d.drawString("WASD or arrows to move.", windowSizeX/2-138, windowSizeY/2+24);
 				g2d.drawString("Space will also Shoot.", windowSizeX/2-132, windowSizeY/2+48);
 				g2d.drawString("All objects screen-wrap.", windowSizeX/2-144, windowSizeY/2+72);
+				
+				g2d.setFont(new Font("Courier New", Font.PLAIN, 16));
+				g2d.drawString("<-You", 140, 104);
+				g2d.setFont(new Font("Courier New", Font.PLAIN, 12));
+				g2d.drawString("Originally created by Lyle Rains and Ed Logg with hardware from Wendi Allen and published by Atari, Inc. in 1979.", windowSizeX/2-380, windowSizeY-16);
 			} else if (asteroids.length <1) {
 				g2d.setColor(Color.GREEN);
 				g2d.drawString("You Win!", windowSizeX/2-96, windowSizeY/2-24);
@@ -199,7 +204,7 @@ public class GameManager {
 				// Calculate delta time (dt) in seconds
 				lastTime = curTime;
 				curTime = System.currentTimeMillis();
-				float dt = (float)(curTime - lastTime)/1000.0f;
+				float dt = (curTime - lastTime)/1000.0f;
 				
 				gameManager.handleInput(dt); // Check what keys have been pressed and deal with it.				
 				gameManager.updateGame(dt, WINDOW_SIZE_X, WINDOW_SIZE_Y); // Move physics objects and resolve collisions.
