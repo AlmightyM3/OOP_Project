@@ -1,3 +1,8 @@
+/* This program implements a 2d physics body with position, velocity, and vector art.
+ * Author: Matthew Moulton
+ * Date: 11/27/2024 to 12/9/2024
+ */
+
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import javax.vecmath.Vector2d;

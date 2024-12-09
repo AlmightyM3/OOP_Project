@@ -1,3 +1,9 @@
+/* This program implements a subclass of KeyAdapter specialized for the asteroids game.
+ * Author: Matthew Moulton
+ * Date: 11/27/2024 to 12/9/2024
+ */
+
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 

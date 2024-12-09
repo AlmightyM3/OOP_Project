@@ -1,3 +1,9 @@
+/* This program implements the asteroids game.
+ * Author: Matthew Moulton
+ * Date: 11/27/2024 to 12/9/2024
+ */
+
+
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.JFrame;
